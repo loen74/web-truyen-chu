@@ -4,683 +4,730 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Truyện Chữ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* CSS Nâng cấp Giao diện */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-        }
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .navbar-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar h1 {
-            font-size: 24px;
-        }
-        .navbar-menu {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        .btn-primary {
-            background: white;
-            color: #667eea;
-            font-weight: bold;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .btn-secondary {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid white;
-        }
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        .btn-danger {
-            background: #dc3545;
-            color: white;
+            line-height: 1.6;
+            background-color: #f4f7f6; /* Màu nền nhẹ nhàng */
         }
         .container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
+            max-width: 1000px; /* Tăng chiều rộng tối đa */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff; /* Nền trắng cho nội dung */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ nhẹ */
+            border-radius: 8px;
         }
-        .novels-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+
+        /* Tiêu đề ứng dụng */
+        #app-title {
+            cursor: pointer;
+            color: #007bff;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Giao diện đọc chương */
+        #chapter-content-container {
+            padding: 20px 0;
+        }
+        #chapter-content {
+            white-space: pre-wrap; /* Quan trọng để giữ định dạng xuống dòng của nội dung */
+            font-size: 18px; /* Cỡ chữ lớn hơn */
+            line-height: 1.8; /* Giãn dòng thoải mái */
             margin-top: 20px;
+            color: #333; /* Màu chữ dễ đọc */
+        }
+        #chapter-title {
+            font-size: 28px;
+            color: #007bff; /* Màu xanh nổi bật */
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        /* Nút */
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
         }
         .novel-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            cursor: pointer;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
         }
         .novel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-        .novel-cover {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-        .novel-info {
-            padding: 15px;
-        }
-        .novel-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .novel-author {
-            color: #666;
-            font-size: 14px;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-        .modal.active {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-content h2 {
-            margin-bottom: 20px;
-            color: #667eea;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .form-group textarea {
-            min-height: 200px;
-            font-family: inherit;
-        }
-        .chapters-list {
-            margin-top: 20px;
-        }
-        .chapter-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-        .chapter-item:hover {
-            background: #f8f9fa;
-        }
-        .chapter-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            line-height: 1.8;
-            white-space: pre-wrap;
-        }
-        .hidden {
-            display: none;
-        }
-        .user-info {
-            color: white;
-            font-size: 14px;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <div class="navbar">
-        <div class="navbar-content">
-            <h1>📚 Web Truyện Chữ</h1>
-            <div class="navbar-menu">
-                <span class="user-info hidden" id="userInfo"></span>
-                <button class="btn btn-primary hidden" id="btnAddNovel">+ Thêm Truyện</button>
-                <button class="btn btn-primary" id="btnLogin">Đăng Nhập</button>
-                <button class="btn btn-secondary hidden" id="btnLogout">Đăng Xuất</button>
+
+    <div class="container mt-4">
+        <header class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+            <h2 id="app-title" onclick="showNovelList()">Web Truyện Chữ</h2>
+            <div id="auth-controls">
+                </div>
+        </header>
+
+        <div id="main-content">
             </div>
-        </div>
     </div>
 
-    <!-- Container -->
-    <div class="container">
-        <div id="homeView">
-            <h2>Danh Sách Truyện</h2>
-            <div class="novels-grid" id="novelsGrid"></div>
-        </div>
-
-        <div id="novelDetailView" class="hidden">
-            <button class="btn btn-secondary" onclick="showHome()">← Quay lại</button>
-            <div id="novelDetail"></div>
-        </div>
-
-        <div id="chapterView" class="hidden">
-            <button class="btn btn-secondary" onclick="backToNovel()">← Quay lại truyện</button>
-            <div id="chapterContent"></div>
-        </div>
-    </div>
-
-    <!-- Modal Login -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <h2>Đăng Nhập</h2>
-            <div class="form-group">
-                <label>Email:</label>
-                <input type="email" id="loginEmail" placeholder="admin@truyen.com">
-            </div>
-            <div class="form-group">
-                <label>Mật khẩu:</label>
-                <input type="password" id="loginPassword" placeholder="123456">
-            </div>
-            <button class="btn btn-primary" onclick="login()">Đăng Nhập</button>
-            <button class="btn btn-secondary" onclick="closeModal('loginModal')">Hủy</button>
-            <p style="margin-top: 15px;">Chưa có tài khoản? <a href="#" onclick="showRegisterModal()">Đăng ký</a></p>
-        </div>
-    </div>
-
-    <!-- Modal Register -->
-    <div class="modal" id="registerModal">
-        <div class="modal-content">
-            <h2>Đăng Ký</h2>
-            <div class="form-group">
-                <label>Tên:</label>
-                <input type="text" id="registerName" placeholder="Nguyễn Văn A">
-            </div>
-            <div class="form-group">
-                <label>Email:</label>
-                <input type="email" id="registerEmail" placeholder="email@example.com">
-            </div>
-            <div class="form-group">
-                <label>Mật khẩu:</label>
-                <input type="password" id="registerPassword" placeholder="Tối thiểu 6 ký tự">
-            </div>
-            <button class="btn btn-primary" onclick="register()">Đăng Ký</button>
-            <button class="btn btn-secondary" onclick="closeModal('registerModal')">Hủy</button>
-        </div>
-    </div>
-
-    <!-- Modal Add/Edit Novel -->
-    <div class="modal" id="novelModal">
-        <div class="modal-content">
-            <h2 id="novelModalTitle">Thêm Truyện Mới</h2>
-            <div class="form-group">
-                <label>Tên truyện:</label>
-                <input type="text" id="novelTitle" placeholder="Tiên Nghịch">
-            </div>
-            <div class="form-group">
-                <label>Tác giả:</label>
-                <input type="text" id="novelAuthor" placeholder="Nhĩ Căn">
-            </div>
-            <div class="form-group">
-                <label>Mô tả:</label>
-                <textarea id="novelDescription" placeholder="Mô tả nội dung truyện..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Link ảnh bìa:</label>
-                <input type="text" id="novelCover" placeholder="https://...">
-            </div>
-            <button class="btn btn-primary" onclick="saveNovel()">Lưu</button>
-            <button class="btn btn-secondary" onclick="closeModal('novelModal')">Hủy</button>
-        </div>
-    </div>
-
-    <!-- Modal Add/Edit Chapter -->
-    <div class="modal" id="chapterModal">
-        <div class="modal-content">
-            <h2 id="chapterModalTitle">Thêm Chương Mới</h2>
-            <div class="form-group">
-                <label>Tiêu đề chương:</label>
-                <input type="text" id="chapterTitle" placeholder="Chương 1: Khởi Đầu">
-            </div>
-            <div class="form-group">
-                <label>Nội dung:</label>
-                <textarea id="chapterContent" placeholder="Viết nội dung chương..."></textarea>
-            </div>
-            <button class="btn btn-primary" onclick="saveChapter()">Lưu</button>
-            <button class="btn btn-secondary" onclick="closeModal('chapterModal')">Hủy</button>
-        </div>
-    </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-const API_URL = window.location.hostname === 'localhost' 
-  ? 'http://localhost:3000/api'
-  : '/api';
-        let token = localStorage.getItem('token');
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/api'
+            : '/api';
+        
+        const mainContent = document.getElementById('main-content');
+        const authControls = document.getElementById('auth-controls');
         let currentUser = null;
-        let currentNovel = null;
-        let editingNovelId = null;
-        let editingChapterId = null;
 
-        // Init
-        document.addEventListener('DOMContentLoaded', () => {
-            if (token) {
-                fetchCurrentUser();
-            }
-            loadNovels();
-        });
+        // =======================================================
+        // CÁC HÀM TIỆN ÍCH
+        // =======================================================
 
-        // Auth
-        async function fetchCurrentUser() {
-            try {
-                const res = await fetch(`${API_URL}/auth/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    currentUser = await res.json();
-                    updateUI();
-                } else {
-                    logout();
-                }
-            } catch (err) {
-                console.error(err);
-            }
+        function getToken() {
+            return localStorage.getItem('token');
         }
 
-        async function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            try {
-                const res = await fetch(`${API_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await res.json();
-                if (res.ok) {
-                    token = data.token;
-                    currentUser = data.user;
-                    localStorage.setItem('token', token);
-                    closeModal('loginModal');
-                    updateUI();
-                    loadNovels();
-                } else {
-                    alert(data.message);
-                }
-            } catch (err) {
-                alert('Lỗi kết nối server');
-            }
+        function saveToken(token) {
+            localStorage.setItem('token', token);
         }
 
-        async function register() {
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            
-            try {
-                const res = await fetch(`${API_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password })
-                });
-                
-                const data = await res.json();
-                if (res.ok) {
-                    token = data.token;
-                    currentUser = data.user;
-                    localStorage.setItem('token', token);
-                    closeModal('registerModal');
-                    updateUI();
-                    loadNovels();
-                } else {
-                    alert(data.message);
-                }
-            } catch (err) {
-                alert('Lỗi kết nối server');
-            }
-        }
-
-        function logout() {
-            token = null;
-            currentUser = null;
+        function removeToken() {
             localStorage.removeItem('token');
-            updateUI();
-            loadNovels();
         }
 
-        function updateUI() {
-            if (currentUser) {
-                document.getElementById('userInfo').textContent = `Xin chào, ${currentUser.name}`;
-                document.getElementById('userInfo').classList.remove('hidden');
-                document.getElementById('btnLogin').classList.add('hidden');
-                document.getElementById('btnLogout').classList.remove('hidden');
-                document.getElementById('btnAddNovel').classList.remove('hidden');
+        function parseToken(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function updateAuthControls() {
+            const token = getToken();
+            if (token) {
+                currentUser = parseToken(token);
+                if (currentUser) {
+                    authControls.innerHTML = `
+                        <span class="me-3 fw-bold text-success"><i class="fas fa-user-circle"></i> ${currentUser.name}</span>
+                        <button class="btn btn-sm btn-danger" onclick="logout()">Đăng Xuất</button>
+                    `;
+                } else {
+                    logout(); // Token không hợp lệ, xóa token
+                }
             } else {
-                document.getElementById('userInfo').classList.add('hidden');
-                document.getElementById('btnLogin').classList.remove('hidden');
-                document.getElementById('btnLogout').classList.add('hidden');
-                document.getElementById('btnAddNovel').classList.add('hidden');
-            }
-        }
-
-        // Novels
-        async function loadNovels() {
-            try {
-                const res = await fetch(`${API_URL}/novels`);
-                const novels = await res.json();
-                
-                const grid = document.getElementById('novelsGrid');
-                grid.innerHTML = novels.map(novel => `
-                    <div class="novel-card" onclick="showNovelDetail(${novel.id})">
-                        <img src="${novel.coverImage}" class="novel-cover" alt="${novel.title}">
-                        <div class="novel-info">
-                            <div class="novel-title">${novel.title}</div>
-                            <div class="novel-author">${novel.author}</div>
-                            <div style="color: #999; font-size: 12px; margin-top: 5px;">
-                                ${novel.chapterCount} chương
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        async function showNovelDetail(novelId) {
-            try {
-                const res = await fetch(`${API_URL}/novels/${novelId}`);
-                currentNovel = await res.json();
-                
-                const canEdit = currentUser && currentUser.id === currentNovel.authorId;
-                
-                document.getElementById('novelDetail').innerHTML = `
-                    <div style="background: white; padding: 30px; border-radius: 10px; margin-top: 20px;">
-                        <div style="display: flex; gap: 30px;">
-                            <img src="${currentNovel.coverImage}" style="width: 200px; height: 280px; object-fit: cover; border-radius: 10px;">
-                            <div style="flex: 1;">
-                                <h1>${currentNovel.title}</h1>
-                                <p style="color: #666; margin: 10px 0;">Tác giả: ${currentNovel.author}</p>
-                                <p style="line-height: 1.6; margin-top: 20px;">${currentNovel.description}</p>
-                                ${canEdit ? `
-                                    <div style="margin-top: 20px;">
-                                        <button class="btn btn-primary" onclick="editNovel(${currentNovel.id})">Sửa Truyện</button>
-                                        <button class="btn btn-success" onclick="showAddChapterModal()">+ Thêm Chương</button>
-                                        <button class="btn btn-danger" onclick="deleteNovel(${currentNovel.id})">Xóa Truyện</button>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                        <h3 style="margin-top: 30px;">Danh Sách Chương</h3>
-                        <div class="chapters-list">
-                            ${currentNovel.chapters.map(chapter => `
-                                <div class="chapter-item" onclick="showChapter(${chapter.id})">
-                                    <span>Chương ${chapter.chapterNumber}: ${chapter.title}</span>
-                                    ${canEdit ? `
-                                        <div>
-                                            <button class="btn btn-primary" onclick="event.stopPropagation(); editChapter(${chapter.id})">Sửa</button>
-                                            <button class="btn btn-danger" onclick="event.stopPropagation(); deleteChapter(${chapter.id})">Xóa</button>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
+                currentUser = null;
+                authControls.innerHTML = `
+                    <button class="btn btn-sm btn-outline-primary me-2" onclick="showLoginForm()">Đăng Nhập</button>
+                    <button class="btn btn-sm btn-primary" onclick="showRegisterForm()">Đăng Ký</button>
                 `;
-                
-                showView('novelDetailView');
-            } catch (err) {
-                console.error(err);
             }
         }
+        
+        async function checkTokenOnLoad() {
+             const token = getToken();
+             if (token) {
+                 currentUser = parseToken(token);
+                 // Thêm kiểm tra hết hạn (đơn giản)
+                 if (currentUser && currentUser.exp * 1000 > Date.now()) {
+                    updateAuthControls();
+                 } else {
+                    removeToken();
+                    currentUser = null;
+                    updateAuthControls();
+                 }
+             }
+        }
 
+        // =======================================================
+        // XỬ LÝ AUTHENTICATION
+        // =======================================================
+        
+        function logout() {
+            removeToken();
+            currentUser = null;
+            updateAuthControls();
+            showNovelList();
+        }
+
+        function showLoginForm() {
+            mainContent.innerHTML = `
+                <h3>Đăng Nhập</h3>
+                <form id="login-form" class="mt-4">
+                    <div class="mb-3">
+                        <label for="login-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="login-email" required value="admin@truyen.com">
+                    </div>
+                    <div class="mb-3">
+                        <label for="login-password" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="login-password" required value="123456">
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Đăng Nhập</button>
+                    <div id="login-message" class="mt-3 text-danger"></div>
+                </form>
+            `;
+
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                const messageDiv = document.getElementById('login-message');
+                messageDiv.textContent = '';
+
+                try {
+                    const response = await fetch(`${API_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        saveToken(data.token);
+                        updateAuthControls();
+                        showNovelList();
+                    } else {
+                        messageDiv.textContent = data.message || 'Đăng nhập thất bại.';
+                    }
+                } catch (error) {
+                    messageDiv.textContent = 'Lỗi kết nối server.';
+                }
+            });
+        }
+
+        function showRegisterForm() {
+            mainContent.innerHTML = `
+                <h3>Đăng Ký Tài Khoản</h3>
+                <form id="register-form" class="mt-4">
+                    <div class="mb-3">
+                        <label for="register-name" class="form-label">Tên người dùng</label>
+                        <input type="text" class="form-control" id="register-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="register-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="register-email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="register-password" class="form-label">Mật khẩu (ít nhất 6 ký tự)</label>
+                        <input type="password" class="form-control" id="register-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Đăng Ký</button>
+                    <div id="register-message" class="mt-3 text-danger"></div>
+                </form>
+            `;
+
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const messageDiv = document.getElementById('register-message');
+                messageDiv.textContent = '';
+
+                try {
+                    const response = await fetch(`${API_URL}/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.className = 'mt-3 text-success';
+                        messageDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${data.message || 'Đăng ký thành công! Vui lòng đăng nhập.'}`;
+                        // Tự động chuyển về form đăng nhập sau 2s
+                        setTimeout(showLoginForm, 2000); 
+                    } else {
+                        messageDiv.className = 'mt-3 text-danger';
+                        // Hiển thị lỗi từ validation (nếu có)
+                        if (data.errors && data.errors.length > 0) {
+                            messageDiv.textContent = data.errors[0].msg;
+                        } else {
+                            messageDiv.textContent = data.message || 'Đăng ký thất bại.';
+                        }
+                    }
+                } catch (error) {
+                    messageDiv.className = 'mt-3 text-danger';
+                    messageDiv.textContent = 'Lỗi kết nối server.';
+                }
+            });
+        }
+
+        // =======================================================
+        // XỬ LÝ NOVELS (TRUYỆN)
+        // =======================================================
+
+        async function fetchNovels() {
+            const response = await fetch(`${API_URL}/novels`);
+            return response.json();
+        }
+
+        async function fetchNovelDetails(novelId) {
+            const response = await fetch(`${API_URL}/novels/${novelId}`);
+            return response.json();
+        }
+
+        async function fetchNovelChapters(novelId) {
+            const response = await fetch(`${API_URL}/novels/${novelId}/chapters`);
+            return response.json();
+        }
+
+        function showNovelList() {
+            let addNovelButton = '';
+            if (currentUser) {
+                addNovelButton = `
+                    <button class="btn btn-success mb-3" onclick="showAddNovelForm()"><i class="fas fa-plus"></i> Thêm Truyện Mới</button>
+                `;
+            }
+
+            mainContent.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3>Danh Sách Truyện</h3>
+                    ${addNovelButton}
+                </div>
+                <div id="novel-list" class="row">
+                    <p class="text-center text-muted">Đang tải truyện...</p>
+                </div>
+            `;
+
+            fetchNovels().then(novels => {
+                const novelListDiv = document.getElementById('novel-list');
+                novelListDiv.innerHTML = '';
+                if (novels.length === 0) {
+                     novelListDiv.innerHTML = '<p class="text-center text-muted">Chưa có truyện nào.</p>';
+                } else {
+                    novels.forEach(novel => {
+                        novelListDiv.innerHTML += `
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card novel-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-primary" style="cursor: pointer;" onclick="showNovelDetails(${novel.id})">${novel.title}</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted"><i class="fas fa-pen-nib"></i> Tác giả: ${novel.author_name}</h6>
+                                        <p class="card-text text-truncate">${novel.description}</p>
+                                        <button class="btn btn-sm btn-outline-info" onclick="showNovelDetails(${novel.id})">Đọc Truyện</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            }).catch(() => {
+                document.getElementById('novel-list').innerHTML = '<p class="text-center text-danger">Lỗi khi tải danh sách truyện.</p>';
+            });
+        }
+
+        async function showNovelDetails(novelId) {
+            try {
+                const novel = await fetchNovelDetails(novelId);
+                const chapters = await fetchNovelChapters(novelId);
+                
+                let controls = '';
+                if (currentUser && (currentUser.id === novel.user_id || currentUser.role === 'admin')) {
+                    controls = `
+                        <div class="my-3 d-flex justify-content-end">
+                            <button class="btn btn-sm btn-info me-2" onclick="showAddChapterForm(${novel.id})"><i class="fas fa-plus-square"></i> Thêm Chương</button>
+                            <button class="btn btn-sm btn-warning me-2" onclick="showEditNovelForm(${novel.id})"><i class="fas fa-edit"></i> Sửa Truyện</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteNovel(${novel.id})"><i class="fas fa-trash-alt"></i> Xóa Truyện</button>
+                        </div>
+                    `;
+                }
+
+                let chapterListHtml = chapters.length === 0 
+                    ? '<p class="text-center text-muted">Truyện chưa có chương nào.</p>'
+                    : '<ul class="list-group list-group-flush">';
+
+                chapters.forEach((chapter, index) => {
+                    chapterListHtml += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="chapter-link text-primary" style="cursor: pointer;" onclick="showChapter(${chapter.id})">
+                                <i class="fas fa-file-alt me-2"></i> Chương ${index + 1}: ${chapter.title}
+                            </span>
+                            ${currentUser && (currentUser.id === novel.user_id || currentUser.role === 'admin') ? 
+                                `<div>
+                                    <button class="btn btn-sm btn-outline-warning me-2" onclick="showEditChapterForm(${chapter.id}, ${novel.id})"><i class="fas fa-pen"></i> Sửa</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteChapter(${chapter.id}, ${novel.id})"><i class="fas fa-times"></i> Xóa</button>
+                                </div>`
+                                : ''}
+                        </li>
+                    `;
+                });
+                if (chapters.length > 0) chapterListHtml += '</ul>';
+
+
+                mainContent.innerHTML = `
+                    <button class="btn btn-secondary btn-sm mb-3" onclick="showNovelList()"><i class="fas fa-arrow-left"></i> Quay lại</button>
+                    <h2 class="text-center text-success">${novel.title}</h2>
+                    <p class="text-center text-muted">Tác giả: ${novel.author_name}</p>
+                    <div class="alert alert-light border p-3">
+                        <p class="fw-bold">Tóm tắt:</p>
+                        <p>${novel.description}</p>
+                    </div>
+                    ${controls}
+                    <h4><i class="fas fa-list-ol"></i> Mục Lục Chương:</h4>
+                    ${chapterListHtml}
+                `;
+
+            } catch (error) {
+                mainContent.innerHTML = `<p class="text-danger">Lỗi: Không tìm thấy truyện hoặc lỗi server.</p>`;
+            }
+        }
+        
+        // Form CRUD cho Novel... (Tương tự code cũ, không thay đổi)
+        function showAddNovelForm() {
+            // ... (Code hiện form Thêm Truyện) ...
+            mainContent.innerHTML = `
+                <h3>Thêm Truyện Mới</h3>
+                <form id="add-novel-form" class="mt-4">
+                    <div class="mb-3">
+                        <label for="novel-title" class="form-label">Tên Truyện</label>
+                        <input type="text" class="form-control" id="novel-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="novel-description" class="form-label">Tóm Tắt</label>
+                        <textarea class="form-control" id="novel-description" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu Truyện</button>
+                    <button type="button" class="btn btn-secondary" onclick="showNovelList()">Hủy</button>
+                    <div id="novel-message" class="mt-3"></div>
+                </form>
+            `;
+
+            document.getElementById('add-novel-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('novel-title').value;
+                const description = document.getElementById('novel-description').value;
+                const messageDiv = document.getElementById('novel-message');
+                messageDiv.textContent = '';
+
+                try {
+                    const response = await fetch(`${API_URL}/novels`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}` 
+                        },
+                        body: JSON.stringify({ title, description })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.className = 'mt-3 text-success';
+                        messageDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${data.message || 'Thêm truyện thành công!'}`;
+                        setTimeout(showNovelDetails.bind(null, data.novelId), 1500);
+                    } else if (response.status === 401 || response.status === 403) {
+                        messageDiv.className = 'mt-3 text-danger';
+                        messageDiv.textContent = 'Bạn cần đăng nhập để thêm truyện.';
+                    } else {
+                        messageDiv.className = 'mt-3 text-danger';
+                        messageDiv.textContent = data.message || 'Lỗi khi thêm truyện.';
+                    }
+                } catch (error) {
+                    messageDiv.className = 'mt-3 text-danger';
+                    messageDiv.textContent = 'Lỗi kết nối server.';
+                }
+            });
+        }
+        
+        async function showEditNovelForm(novelId) {
+             const novel = await fetchNovelDetails(novelId);
+             if (!novel) return;
+
+             mainContent.innerHTML = `
+                 <h3>Sửa Truyện: ${novel.title}</h3>
+                 <form id="edit-novel-form" class="mt-4">
+                     <div class="mb-3">
+                         <label for="novel-title" class="form-label">Tên Truyện</label>
+                         <input type="text" class="form-control" id="novel-title" value="${novel.title}" required>
+                     </div>
+                     <div class="mb-3">
+                         <label for="novel-description" class="form-label">Tóm Tắt</label>
+                         <textarea class="form-control" id="novel-description" rows="5" required>${novel.description}</textarea>
+                     </div>
+                     <button type="submit" class="btn btn-warning"><i class="fas fa-sync-alt"></i> Cập Nhật</button>
+                     <button type="button" class="btn btn-secondary" onclick="showNovelDetails(${novelId})">Hủy</button>
+                     <div id="novel-message" class="mt-3"></div>
+                 </form>
+             `;
+
+             document.getElementById('edit-novel-form').addEventListener('submit', async (e) => {
+                 e.preventDefault();
+                 const title = document.getElementById('novel-title').value;
+                 const description = document.getElementById('novel-description').value;
+                 const messageDiv = document.getElementById('novel-message');
+                 messageDiv.textContent = '';
+
+                 try {
+                     const response = await fetch(`${API_URL}/novels/${novelId}`, {
+                         method: 'PUT',
+                         headers: { 
+                             'Content-Type': 'application/json',
+                             'Authorization': `Bearer ${getToken()}` 
+                         },
+                         body: JSON.stringify({ title, description })
+                     });
+
+                     const data = await response.json();
+
+                     if (response.ok) {
+                         messageDiv.className = 'mt-3 text-success';
+                         messageDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${data.message || 'Cập nhật truyện thành công!'}`;
+                         setTimeout(showNovelDetails.bind(null, novelId), 1500);
+                     } else if (response.status === 401 || response.status === 403) {
+                         messageDiv.className = 'mt-3 text-danger';
+                         messageDiv.textContent = 'Bạn không có quyền sửa truyện này.';
+                     } else {
+                         messageDiv.className = 'mt-3 text-danger';
+                         messageDiv.textContent = data.message || 'Lỗi khi cập nhật truyện.';
+                     }
+                 } catch (error) {
+                     messageDiv.className = 'mt-3 text-danger';
+                     messageDiv.textContent = 'Lỗi kết nối server.';
+                 }
+             });
+         }
+        
+        async function deleteNovel(novelId) {
+             if (!confirm('Bạn có chắc chắn muốn XÓA truyện này và TẤT CẢ các chương của nó không?')) return;
+
+             try {
+                 const response = await fetch(`${API_URL}/novels/${novelId}`, {
+                     method: 'DELETE',
+                     headers: { 'Authorization': `Bearer ${getToken()}` }
+                 });
+
+                 const data = await response.json();
+
+                 if (response.ok) {
+                     alert('Xóa truyện thành công!');
+                     showNovelList();
+                 } else if (response.status === 401 || response.status === 403) {
+                     alert('Bạn không có quyền xóa truyện này.');
+                 } else {
+                     alert(data.message || 'Lỗi khi xóa truyện.');
+                 }
+             } catch (error) {
+                 alert('Lỗi kết nối server.');
+             }
+         }
+
+        // =======================================================
+        // XỬ LÝ CHAPTERS (CHƯƠNG)
+        // =======================================================
+
+        // Hàm Đã được Nâng cấp: Thêm logic chuyển chương
         async function showChapter(chapterId) {
             try {
-                const res = await fetch(`${API_URL}/chapters/${chapterId}`);
-                const chapter = await res.json();
-                
-                document.getElementById('chapterContent').innerHTML = `
-                    <div class="chapter-content">
-                        <h2>Chương ${chapter.chapterNumber}: ${chapter.title}</h2>
-                        <hr style="margin: 20px 0;">
-                        <div>${chapter.content}</div>
+                const response = await fetch(`${API_URL}/chapters/${chapterId}`);
+                if (!response.ok) throw new Error('Không tìm thấy chương');
+
+                const chapter = await response.json();
+                const novel = await fetchNovelDetails(chapter.novel_id);
+                const chapters = await fetchNovelChapters(chapter.novel_id); // Tải tất cả các chương
+
+                // Tính toán chương trước/sau
+                const chapterIndex = chapters.findIndex(c => c.id === chapterId);
+                const prevChapter = chapterIndex > 0 ? chapters[chapterIndex - 1] : null;
+                const nextChapter = chapterIndex < chapters.length - 1 ? chapters[chapterIndex + 1] : null;
+
+                const chapterHtml = `
+                    <div id="chapter-content-container">
+                        <h1 id="chapter-title">${chapter.title}</h1>
+                        <p class="text-center text-muted mb-4">Thuộc truyện: <span class="text-primary fw-bold" style="cursor: pointer;" onclick="showNovelDetails(${novel.id})">${novel.title}</span></p>
+                        <div id="chapter-content">${chapter.content}</div>
                     </div>
                 `;
                 
-                showView('chapterView');
-            } catch (err) {
-                console.error(err);
+                // Cập nhật phần navigation (Đã Nâng cấp)
+                const navHtml = `
+                    <div class="d-flex justify-content-between my-4">
+                        <button class="btn btn-secondary" ${prevChapter ? '' : 'disabled'} onclick="showChapter(${prevChapter?.id})">
+                            <i class="fas fa-arrow-left"></i> Chương Trước
+                        </button>
+                        <button class="btn btn-primary" onclick="showNovelDetails(${novel.id})">
+                            <i class="fas fa-list"></i> Mục Lục
+                        </button>
+                        <button class="btn btn-secondary" ${nextChapter ? '' : 'disabled'} onclick="showChapter(${nextChapter?.id})">
+                            Chương Tiếp <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                `;
+                
+                mainContent.innerHTML = navHtml + chapterHtml + navHtml;
+
+            } catch (error) {
+                mainContent.innerHTML = `<p class="text-danger">Lỗi: Không tìm thấy chương hoặc lỗi server.</p>`;
             }
         }
+        
+        // Form CRUD cho Chapter... (Code tương tự, không thay đổi)
+        function showAddChapterForm(novelId) {
+            mainContent.innerHTML = `
+                <h3>Thêm Chương Mới</h3>
+                <form id="add-chapter-form" class="mt-4">
+                    <div class="mb-3">
+                        <label for="chapter-title" class="form-label">Tên Chương</label>
+                        <input type="text" class="form-control" id="chapter-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="chapter-content" class="form-label">Nội Dung Chương</label>
+                        <textarea class="form-control" id="chapter-content" rows="15" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu Chương</button>
+                    <button type="button" class="btn btn-secondary" onclick="showNovelDetails(${novelId})">Hủy</button>
+                    <div id="chapter-message" class="mt-3"></div>
+                </form>
+            `;
 
-        function showAddNovelModal() {
-            editingNovelId = null;
-            document.getElementById('novelModalTitle').textContent = 'Thêm Truyện Mới';
-            document.getElementById('novelTitle').value = '';
-            document.getElementById('novelAuthor').value = '';
-            document.getElementById('novelDescription').value = '';
-            document.getElementById('novelCover').value = '';
-            openModal('novelModal');
-        }
+            document.getElementById('add-chapter-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('chapter-title').value;
+                const content = document.getElementById('chapter-content').value;
+                const messageDiv = document.getElementById('chapter-message');
+                messageDiv.textContent = '';
 
-        function editNovel(novelId) {
-            editingNovelId = novelId;
-            document.getElementById('novelModalTitle').textContent = 'Sửa Truyện';
-            document.getElementById('novelTitle').value = currentNovel.title;
-            document.getElementById('novelAuthor').value = currentNovel.author;
-            document.getElementById('novelDescription').value = currentNovel.description;
-            document.getElementById('novelCover').value = currentNovel.coverImage;
-            openModal('novelModal');
-        }
+                try {
+                    const response = await fetch(`${API_URL}/novels/${novelId}/chapters`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}` 
+                        },
+                        body: JSON.stringify({ title, content })
+                    });
 
-        async function saveNovel() {
-            const title = document.getElementById('novelTitle').value;
-            const author = document.getElementById('novelAuthor').value;
-            const description = document.getElementById('novelDescription').value;
-            const coverImage = document.getElementById('novelCover').value;
-            
-            try {
-                const url = editingNovelId 
-                    ? `${API_URL}/novels/${editingNovelId}`
-                    : `${API_URL}/novels`;
-                const method = editingNovelId ? 'PUT' : 'POST';
-                
-                const res = await fetch(url, {
-                    method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ title, author, description, coverImage })
-                });
-                
-                if (res.ok) {
-                    closeModal('novelModal');
-                    if (editingNovelId) {
-                        showNovelDetail(editingNovelId);
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.className = 'mt-3 text-success';
+                        messageDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${data.message || 'Thêm chương thành công!'}`;
+                        setTimeout(showNovelDetails.bind(null, novelId), 1500);
+                    } else if (response.status === 401 || response.status === 403) {
+                        messageDiv.className = 'mt-3 text-danger';
+                        messageDiv.textContent = 'Bạn không có quyền thêm chương cho truyện này.';
                     } else {
-                        showHome();
+                        messageDiv.className = 'mt-3 text-danger';
+                        messageDiv.textContent = data.message || 'Lỗi khi thêm chương.';
                     }
-                } else {
-                    const data = await res.json();
-                    alert(data.message);
+                } catch (error) {
+                    messageDiv.className = 'mt-3 text-danger';
+                    messageDiv.textContent = 'Lỗi kết nối server.';
                 }
-            } catch (err) {
-                alert('Lỗi kết nối server');
-            }
+            });
         }
+        
+        async function showEditChapterForm(chapterId, novelId) {
+            const response = await fetch(`${API_URL}/chapters/${chapterId}`);
+            const chapter = await response.json();
+            if (!chapter) return;
 
-        async function deleteNovel(novelId) {
-            if (!confirm('Bạn có chắc muốn xóa truyện này?')) return;
-            
+            mainContent.innerHTML = `
+                <h3>Sửa Chương: ${chapter.title}</h3>
+                <form id="edit-chapter-form" class="mt-4">
+                    <div class="mb-3">
+                        <label for="chapter-title" class="form-label">Tên Chương</label>
+                        <input type="text" class="form-control" id="chapter-title" value="${chapter.title}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="chapter-content" class="form-label">Nội Dung Chương</label>
+                        <textarea class="form-control" id="chapter-content" rows="15" required>${chapter.content}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning"><i class="fas fa-sync-alt"></i> Cập Nhật</button>
+                    <button type="button" class="btn btn-secondary" onclick="showNovelDetails(${novelId})">Hủy</button>
+                    <div id="chapter-message" class="mt-3"></div>
+                </form>
+            `;
+
+            document.getElementById('edit-chapter-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const title = document.getElementById('chapter-title').value;
+                const content = document.getElementById('chapter-content').value;
+                const messageDiv = document.getElementById('chapter-message');
+                messageDiv.textContent = '';
+
+                try {
+                    const response = await fetch(`${API_URL}/chapters/${chapterId}`, {
+                        method: 'PUT',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getToken()}` 
+                        },
+                        body: JSON.stringify({ title, content })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        messageDiv.className = 'mt-3 text-success';
+                        messageDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${data.message || 'Cập nhật chương thành công!'}`;
+                        setTimeout(showNovelDetails.bind(null, novelId), 1500);
+                    } else if (response.status === 401 || response.status === 403) {
+                        messageDiv.className = 'mt-3 text-danger';
+                        messageDiv.textContent = 'Bạn không có quyền sửa chương này.';
+                    } else {
+                        messageDiv.className = 'mt-3 text-danger';
+                        messageDiv.textContent = data.message || 'Lỗi khi cập nhật chương.';
+                    }
+                } catch (error) {
+                    messageDiv.className = 'mt-3 text-danger';
+                    messageDiv.textContent = 'Lỗi kết nối server.';
+                }
+            });
+        }
+        
+        async function deleteChapter(chapterId, novelId) {
+            if (!confirm('Bạn có chắc chắn muốn XÓA chương này không?')) return;
+
             try {
-                const res = await fetch(`${API_URL}/novels/${novelId}`, {
+                const response = await fetch(`${API_URL}/chapters/${chapterId}`, {
                     method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
                 });
-                
-                if (res.ok) {
-                    showHome();
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Xóa chương thành công!');
+                    showNovelDetails(novelId);
+                } else if (response.status === 401 || response.status === 403) {
+                    alert('Bạn không có quyền xóa chương này.');
                 } else {
-                    const data = await res.json();
-                    alert(data.message);
+                    alert(data.message || 'Lỗi khi xóa chương.');
                 }
-            } catch (err) {
-                alert('Lỗi kết nối server');
+            } catch (error) {
+                alert('Lỗi kết nối server.');
             }
         }
 
-        function showAddChapterModal() {
-            editingChapterId = null;
-            document.getElementById('chapterModalTitle').textContent = 'Thêm Chương Mới';
-            document.getElementById('chapterTitle').value = '';
-            document.getElementById('chapterContent').value = '';
-            openModal('chapterModal');
-        }
+        // =======================================================
+        // KHỞI ĐỘNG ỨNG DỤNG
+        // =======================================================
 
-        function editChapter(chapterId) {
-            editingChapterId = chapterId;
-            const chapter = currentNovel.chapters.find(c => c.id === chapterId);
-            document.getElementById('chapterModalTitle').textContent = 'Sửa Chương';
-            document.getElementById('chapterTitle').value = chapter.title;
-            document.getElementById('chapterContent').value = chapter.content;
-            openModal('chapterModal');
-        }
+        checkTokenOnLoad();
+        showNovelList();
 
-        async function saveChapter() {
-            const title = document.getElementById('chapterTitle').value;
-            const content = document.getElementById('chapterContent').value;
-            
-            try {
-                const url = editingChapterId
-                    ? `${API_URL}/chapters/${editingChapterId}`
-                    : `${API_URL}/novels/${currentNovel.id}/chapters`;
-                const method = editingChapterId ? 'PUT' : 'POST';
-                
-                const res = await fetch(url, {
-                    method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ title, content })
-                });
-                
-                if (res.ok) {
-                    closeModal('chapterModal');
-                    showNovelDetail(currentNovel.id);
-                } else {
-                    const data = await res.json();
-                    alert(data.message);
-                }
-            } catch (err) {
-                alert('Lỗi kết nối server');
-            }
-        }
-
-        async function deleteChapter(chapterId) {
-            if (!confirm('Bạn có chắc muốn xóa chương này?')) return;
-            
-            try {
-                const res = await fetch(`${API_URL}/chapters/${chapterId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (res.ok) {
-                    showNovelDetail(currentNovel.id);
-                } else {
-                    const data = await res.json();
-                    alert(data.message);
-                }
-            } catch (err) {
-                alert('Lỗi kết nối server');
-            }
-        }
-
-        // Navigation
-        function showHome() {
-            loadNovels();
-            showView('homeView');
-        }
-
-        function backToNovel() {
-            showNovelDetail(currentNovel.id);
-        }
-
-        function showView(viewId) {
-            document.getElementById('homeView').classList.add('hidden');
-            document.getElementById('novelDetailView').classList.add('hidden');
-            document.getElementById('chapterView').classList.add('hidden');
-            document.getElementById(viewId).classList.remove('hidden');
-        }
-
-        // Modal
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function showRegisterModal() {
-            closeModal('loginModal');
-            openModal('registerModal');
-        }
-
-        // Event listeners
-        document.getElementById('btnLogin').addEventListener('click', () => openModal('loginModal'));
-        document.getElementById('btnLogout').addEventListener('click', logout);
-        document.getElementById('btnAddNovel').addEventListener('click', showAddNovelModal);
     </script>
 </body>
 </html>
