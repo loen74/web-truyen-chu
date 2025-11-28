@@ -1,0 +1,7 @@
+notepad .gitignore
+```
+
+Paste vào:
+```
+node_modules/
+.env
